@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Forever My Little Stay 💜</title>
+<style>
+  :root{
+    --void:#0c0820;
+    --deep:#1a1240;
+    --plum:#3a1f6e;
+    --orchid:#9d6fd9;
+    --lilac:#c9a8f0;
+    --pink:#f0a8d8;
+    --glow:#e0c3ff;
+    --star:#fff7e0;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--void);
+    color:var(--glow);
+    font-family:'Georgia', 'Times New Roman', serif;
+    overflow-x:hidden;
+  }
+  .display{ font-family:'Brush Script MT','Segoe Script', cursive; }
+
+  /* ---------- Starfield base (shared) ---------- */
+  .sky{
+    position:fixed; inset:0; z-index:0;
+    background:radial-gradient(ellipse at 50% 0%, var(--plum) 0%, var(--deep) 45%, var(--void) 100%);
+  }
+  .stars, .stars2, .stars3{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+  }
+  .twinkle{
+    position:absolute; border-radius:50%; background:var(--star);
+    animation: twinkle ease-in-out infinite;
+  }
+  @keyframes twinkle{ 0%,100%{opacity:.15;} 50%{opacity:1;} }
+
+  .shooting-star{
+    position:fixed; z-index:1; pointer-events:none;
+    width:2px; height:2px; background:white; border-radius:50%;
+    box-shadow:0 0 6px 2px #fff, 0 0 12px 4px var(--lilac);
+    opacity:0;
+    animation: shoot 3.5s linear infinite;
+  }
+  .shooting-star::after{
+    content:''; position:absolute; top:50%; right:0; width:90px; height:1px;
+    background:linear-gradient(to left, rgba(255,255,255,0.9), transparent);
+    transform:translateY(-50%);
+  }
+  @keyframes shoot{
+    0%{ opacity:0; transform: translate(0,0); }
+    3%{ opacity:1; }
+    20%{ opacity:0; transform: translate(-320px, 220px); }
+    100%{ opacity:0; }
+  }
+
+  section{
+    position:relative; z-index:2;
+    min-height:100vh;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center;
+    padding:60px 20px;
+  }
+
+  /* ---------- Scene 1: Title ---------- */
+  #scene1 h1{
+    font-size:clamp(2rem, 6vw, 3.4rem);
+    color:var(--pink);
+    text-shadow:0 0 18px rgba(240,168,216,0.6);
+    letter-spacing:1px;
+  }
+  #scene1 .sub{
+    margin-top:10px; font-size:1.1rem; color:var(--lilac); font-style:italic;
+  }
+  .scroll-hint{
+    margin-top:40px; font-size:.85rem; color:var(--lilac); opacity:.7;
+    animation: bob 2s ease-in-out infinite;
+  }
+  @keyframes bob{ 0%,100%{transform:translateY(0);} 50%{transform:translateY(8px);} }
+
+  /* ---------- Countdown ---------- */
+  .countdown-wrap{ margin-top:24px; }
+  .countdown{
+    display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin-top:18px;
+  }
+  .cbox{
+    background:rgba(255,255,255,0.06);
+    border:1px solid rgba(201,168,240,0.4);
+    border-radius:14px;
+    padding:14px 18px;
+    min-width:70px;
+    backdrop-filter: blur(6px);
+  }
+  .cbox .num{ font-size:1.8rem; font-weight:bold; color:var(--glow); font-family:Georgia, serif;}
+  .cbox .lbl{ font-size:.7rem; letter-spacing:1px; color:var(--lilac); text-transform:uppercase; }
+
+  /* ---------- Gift box scene ---------- */
+  #scene2 .gift{
+    cursor:pointer; user-select:none;
+    width:140px; height:120px; position:relative; margin:30px auto;
+    transition: transform .3s ease;
+  }
+  #scene2 .gift:hover{ transform: scale(1.05); }
+  .box-base{
+    position:absolute; bottom:0; width:140px; height:80px;
+    background:linear-gradient(135deg, var(--orchid), var(--plum));
+    border-radius:6px;
+    box-shadow:0 0 30px rgba(157,111,217,0.6);
+  }
+  .box-lid{
+    position:absolute; top:28px; width:150px; height:26px; left:-5px;
+    background:linear-gradient(135deg, var(--lilac), var(--orchid));
+    border-radius:6px;
+    box-shadow:0 0 20px rgba(201,168,240,0.5);
+    transition: transform .6s ease, opacity .6s ease;
+  }
+  .ribbon-v{ position:absolute; left:62px; top:0; width:16px; height:108px; background:var(--pink); }
+  .ribbon-h{ position:absolute; top:46px; left:0; width:140px; height:16px; background:var(--pink); }
+  .bow{
+    position:absolute; top:8px; left:54px; font-size:1.8rem;
+  }
+  .gift.opened .box-lid{ transform: translateY(-60px) rotate(-25deg); opacity:0; }
+  .glow-pulse{
+    position:absolute; inset:-20px; border-radius:50%;
+    background:radial-gradient(circle, rgba(201,168,240,0.4), transparent 70%);
+    animation:pulse 2.5s ease-in-out infinite;
+  }
+  @keyframes pulse{ 0%,100%{opacity:.4; transform:scale(1);} 50%{opacity:.9; transform:scale(1.15);} }
+  .hint-tap{ margin-top:18px; font-size:.9rem; color:var(--lilac); opacity:.8; }
+
+  /* ---------- Letter scene ---------- */
+  #scene3{ display:none; }
+  .letter-card{
+    max-width:560px;
+    background:rgba(255,255,255,0.07);
+    border:1px solid rgba(201,168,240,0.35);
+    border-radius:18px;
+    padding:40px 30px;
+    backdrop-filter: blur(8px);
+    box-shadow:0 20px 60px rgba(0,0,0,0.4);
+    text-align:left;
+  }
+  .letter-card h2{
+    text-align:center; color:var(--pink); font-size:1.6rem; margin-bottom:18px;
+  }
+  #typed{
+    font-size:1.05rem; line-height:1.85; white-space:pre-wrap; color:var(--glow);
+  }
+  .cursor{ display:inline-block; width:2px; background:var(--glow); animation: blink 1s step-end infinite; }
+  @keyframes blink{ 50%{ opacity:0; } }
+  .signature-line{ text-align:right; margin-top:22px; font-size:1.3rem; color:var(--pink); font-style:italic; }
+
+  /* ---------- Reasons scene ---------- */
+  .reasons-card{ max-width:520px; }
+  #scene4 h2{ color:var(--pink); margin-bottom:10px; }
+  .reason-box{
+    margin-top:24px; min-height:90px;
+    background:rgba(255,255,255,0.06);
+    border:1px solid rgba(201,168,240,0.35);
+    border-radius:14px; padding:20px; font-size:1.05rem;
+  }
+  .btn{
+    margin-top:20px;
+    background:linear-gradient(135deg, var(--orchid), var(--pink));
+    border:none; color:white; padding:10px 26px; border-radius:30px;
+    font-size:.95rem; cursor:pointer; box-shadow:0 0 18px rgba(240,168,216,0.5);
+    transition: transform .2s ease;
+  }
+  .btn:hover{ transform: scale(1.06); }
+  .reason-count{ font-size:.8rem; color:var(--lilac); margin-top:10px; }
+
+  /* ---------- Gallery scene ---------- */
+  .gallery{
+    display:grid; grid-template-columns:repeat(2,1fr); gap:16px; max-width:480px; margin-top:24px;
+  }
+  .frame{
+    aspect-ratio:1; border-radius:14px;
+    background:rgba(255,255,255,0.06);
+    border:1px dashed rgba(201,168,240,0.5);
+    display:flex; align-items:center; justify-content:center;
+    font-size:.85rem; color:var(--lilac); text-align:center; padding:10px;
+    overflow:hidden;
+  }
+  .frame img{ width:100%; height:100%; object-fit:cover; }
+
+  /* ---------- Cake scene ---------- */
+  .cake-wrap{ position:relative; margin-top:20px; cursor:pointer; user-select:none; }
+  .cake{ font-size:5rem; filter: drop-shadow(0 0 20px rgba(240,168,216,0.4)); transition: transform .3s; }
+  .cake.blown{ filter: none; }
+  .flame{ display:inline-block; animation: flicker 1s ease-in-out infinite; }
+  @keyframes flicker{ 0%,100%{opacity:1;} 50%{opacity:.6;} }
+  .blown .flame{ display:none; }
+  #cakeMsg{ margin-top:14px; font-size:.95rem; color:var(--lilac); min-height:24px; }
+
+  /* ---------- Fireworks / Final scene ---------- */
+  #scene7{ overflow:hidden; }
+  .firework{
+    position:absolute; width:4px; height:4px; border-radius:50%;
+  }
+  #scene7 h2{
+    font-size:clamp(1.8rem,5vw,2.8rem); color:var(--pink);
+    text-shadow:0 0 20px rgba(240,168,216,0.7);
+    margin-bottom:10px;
+  }
+  #scene7 .final-sub{ font-size:1.2rem; color:var(--lilac); font-style:italic; }
+
+  .constellation-final{
+    margin-top:30px; font-size:clamp(1.4rem,4vw,2.2rem);
+    color:var(--glow); letter-spacing:1px; text-shadow:0 0 25px rgba(201,168,240,0.8);
+  }
+
+  /* ---------- secret star ---------- */
+  .secret-star{
+    position:fixed; bottom:18px; right:18px; font-size:1.3rem; z-index:50;
+    cursor:pointer; animation: pulse 2s ease-in-out infinite; filter: drop-shadow(0 0 8px var(--lilac));
+  }
+  .secret-modal{
+    position:fixed; inset:0; background:rgba(10,5,25,0.92); z-index:100;
+    display:none; align-items:center; justify-content:center; padding:30px;
+  }
+  .secret-modal.show{ display:flex; }
+  .secret-box{
+    max-width:420px; background:rgba(255,255,255,0.08); border:1px solid rgba(201,168,240,0.4);
+    border-radius:18px; padding:30px; text-align:left; line-height:1.8; font-size:1rem;
+  }
+  .secret-close{
+    margin-top:18px; display:block; margin-left:auto;
+    background:none; border:1px solid var(--lilac); color:var(--lilac);
+    padding:6px 16px; border-radius:20px; cursor:pointer;
+  }
+
+  /* ---------- footer note ---------- */
+  .floaty{
+    position:fixed; bottom:8px; left:0; right:0; text-align:center;
+    font-size:.7rem; color:rgba(201,168,240,0.4); z-index:5;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation:none !important; transition:none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="sky"></div>
+<div class="stars" id="starLayer"></div>
+<div id="shootingStars"></div>
+
+<!-- SCENE 1: Title + Countdown -->
+<section id="scene1">
+  <h1 class="display">Forever My Little Stay</h1>
+  <p class="sub">an early birthday wish, just for you 💜</p>
+
+  <div class="countdown-wrap">
+    <p style="font-size:.85rem; letter-spacing:2px; color:var(--lilac); text-transform:uppercase;">counting down to July 17</p>
+    <div class="countdown" id="countdown">
+      <div class="cbox"><div class="num" id="cd-days">--</div><div class="lbl">days</div></div>
+      <div class="cbox"><div class="num" id="cd-hours">--</div><div class="lbl">hrs</div></div>
+      <div class="cbox"><div class="num" id="cd-mins">--</div><div class="lbl">min</div></div>
+      <div class="cbox"><div class="num" id="cd-secs">--</div><div class="lbl">sec</div></div>
+    </div>
+  </div>
+
+  <p class="scroll-hint">↓ scroll down, Little Stay ↓</p>
+</section>
+
+<!-- SCENE 2: Gift box -->
+<section id="scene2">
+  <h2 class="display" style="color:var(--pink); font-size:1.8rem;">There's something for you...</h2>
+  <div class="gift" id="giftBox" onclick="openGift()">
+    <div class="glow-pulse"></div>
+    <div class="box-base"></div>
+    <div class="ribbon-v"></div>
+    <div class="ribbon-h"></div>
+    <div class="box-lid" id="boxLid"></div>
+    <div class="bow">🎀</div>
+  </div>
+  <p class="hint-tap">tap the gift to open it</p>
+</section>
+
+<!-- SCENE 3: Letter -->
+<section id="scene3">
+  <div class="letter-card">
+    <h2 class="display">Happy Early Birthday 💜</h2>
+    <div id="typed"></div>
+    <div class="signature-line">— Phesy 🌙</div>
+  </div>
+</section>
+
+<!-- SCENE 4: Reasons -->
+<section id="scene4">
+  <div class="reasons-card">
+    <h2 class="display" style="font-size:1.6rem;">Reasons You're Amazing</h2>
+    <p style="color:var(--lilac); font-size:.9rem;">tap to reveal one at a time</p>
+    <div class="reason-box" id="reasonBox">tap the button to start ✨</div>
+    <button class="btn" onclick="nextReason()">Reveal a reason</button>
+    <div class="reason-count" id="reasonCount"></div>
+  </div>
+</section>
+
+<!-- SCENE 5: Gallery -->
+<section id="scene5">
+  <h2 class="display" style="font-size:1.6rem; color:var(--pink);">A Few of My Favorite Memories</h2>
+  <p style="color:var(--lilac); font-size:.85rem; max-width:380px;">(swap these frames for our real photos whenever you want — just drop image files into the gallery folder)</p>
+  <div class="gallery">
+    <div class="frame">📸 our first photo</div>
+    <div class="frame">📸 that random Tuesday</div>
+    <div class="frame">📸 the inside joke</div>
+    <div class="frame">📸 more memories soon</div>
+  </div>
+</section>
+
+<!-- SCENE 6: Cake -->
+<section id="scene6">
+  <h2 class="display" style="font-size:1.6rem; color:var(--pink);">Make a wish, Little Stay</h2>
+  <div class="cake-wrap" id="cakeWrap" onclick="blowCake()">
+    <div class="cake" id="cakeEmoji">🎂<span class="flame" id="flame">🕯️</span></div>
+  </div>
+  <p id="cakeMsg">tap the candle to blow it out</p>
+</section>
+
+<!-- SCENE 7: Fireworks finale -->
+<section id="scene7">
+  <h2 class="display">Happy Birthday, Precious Jenifer</h2>
+  <p class="final-sub">17 • July • 2026 — turning 16 ✨</p>
+  <div class="constellation-final display">Forever my Little Stay 💜</div>
+</section>
+
+<div class="secret-star" id="secretStar" onclick="openSecret()">⭐</div>
+<div class="secret-modal" id="secretModal">
+  <div class="secret-box">
+    <p>Psst...<br><br>
+    Little Stay...<br><br>
+    If you're reading this, congratulations — you found the secret. 😌<br><br>
+    I wanted to leave you one more message.<br><br>
+    Thank you for being the best friend anyone could ask for. You make ordinary conversations feel special, and I'm really grateful our paths crossed.<br><br>
+    No matter where school takes us, you'll always be...<br><br>
+    <strong style="color:var(--pink);">Forever my Little Stay. 💜</strong><br><br>
+    — Phesy</p>
+    <button class="secret-close" onclick="closeSecret()">close</button>
+  </div>
+</div>
+
+<div class="floaty">made with 💜 by Phesy</div>
+
+<script>
+// ---------- Starfield generation ----------
+const starLayer = document.getElementById('starLayer');
+for(let i=0;i<120;i++){
+  const s = document.createElement('div');
+  s.className='twinkle';
+  const size = Math.random()*2.5+1;
+  s.style.width = size+'px';
+  s.style.height = size+'px';
+  s.style.top = Math.random()*100+'%';
+  s.style.left = Math.random()*100+'%';
+  s.style.animationDuration = (Math.random()*3+2)+'s';
+  s.style.animationDelay = (Math.random()*3)+'s';
+  starLayer.appendChild(s);
+}
+
+const shootLayer = document.getElementById('shootingStars');
+for(let i=0;i<6;i++){
+  const s = document.createElement('div');
+  s.className='shooting-star';
+  s.style.top = (Math.random()*50)+'%';
+  s.style.left = (50+Math.random()*40)+'%';
+  s.style.animationDelay = (Math.random()*8)+'s';
+  s.style.animationDuration = (3+Math.random()*3)+'s';
+  shootLayer.appendChild(s);
+}
+
+// ---------- Countdown ----------
+function updateCountdown(){
+  const target = new Date('2026-07-17T00:00:00');
+  const now = new Date();
+  let diff = target - now;
+  if(diff < 0) diff = 0;
+  const days = Math.floor(diff/(1000*60*60*24));
+  const hours = Math.floor((diff/(1000*60*60))%24);
+  const mins = Math.floor((diff/(1000*60))%60);
+  const secs = Math.floor((diff/1000)%60);
+  document.getElementById('cd-days').textContent = days;
+  document.getElementById('cd-hours').textContent = String(hours).padStart(2,'0');
+  document.getElementById('cd-mins').textContent = String(mins).padStart(2,'0');
+  document.getElementById('cd-secs').textContent = String(secs).padStart(2,'0');
+}
+updateCountdown();
+setInterval(updateCountdown, 1000);
+
+// ---------- Gift box -> letter ----------
+function openGift(){
+  const gift = document.getElementById('giftBox');
+  gift.classList.add('opened');
+  setTimeout(()=>{
+    document.getElementById('scene3').style.display='flex';
+    document.getElementById('scene3').scrollIntoView({behavior:'smooth'});
+    startTyping();
+  }, 700);
+}
+
+const letterText = `Hey, Little Stay...
+
+I know your birthday hasn't arrived just yet, but by the time it does we'll probably be buried in school work and won't get much of a chance to celebrate together the way I'd like.
+
+So I'm sending this little piece of my heart a bit early.
+
+Thank you for being someone who brings warmth into conversations, smiles into ordinary days, and memories I'll always treasure.
+
+I genuinely hope this new year of your life is filled with happiness, answered prayers, unforgettable adventures, and countless reasons to smile.
+
+Never stop being the amazing person you are. Keep dreaming. Keep laughing. Keep being you.
+
+Happy 16th birthday in advance, Little Stay. I can't wait to see all the incredible things this year has in store for you.`;
+
+let typed = false;
+function startTyping(){
+  if(typed) return;
+  typed = true;
+  const el = document.getElementById('typed');
+  let i = 0;
+  function type(){
+    if(i <= letterText.length){
+      el.innerHTML = letterText.slice(0,i).replace(/\n/g,'<br>') + '<span class="cursor">&nbsp;</span>';
+      i++;
+      setTimeout(type, 18);
+    } else {
+      el.innerHTML = letterText.replace(/\n/g,'<br>');
+    }
+  }
+  type();
+}
+
+// ---------- Reasons ----------
+const reasons = [
+  "You remember the little details in conversations that most people would forget.",
+  "Your laugh makes even the most boring days feel lighter.",
+  "You never make me feel judged for being exactly who I am.",
+  "You show up for the people you care about, even on your busiest days.",
+  "You have this way of turning ordinary moments into inside jokes that last forever.",
+  "You're one of the most loyal people I know.",
+  "Being around you genuinely makes me a happier person."
+];
+let reasonIndex = 0;
+function nextReason(){
+  const box = document.getElementById('reasonBox');
+  const counter = document.getElementById('reasonCount');
+  if(reasonIndex >= reasons.length){
+    box.textContent = "That's all of them for now... but honestly, there are way more. 💜";
+    counter.textContent = "";
+    return;
+  }
+  box.textContent = reasons[reasonIndex];
+  reasonIndex++;
+  counter.textContent = reasonIndex + " / " + reasons.length;
+}
+
+// ---------- Cake ----------
+function blowCake(){
+  const cake = document.getElementById('cakeEmoji');
+  const flame = document.getElementById('flame');
+  const msg = document.getElementById('cakeMsg');
+  if(cake.classList.contains('blown')) return;
+  cake.classList.add('blown');
+  msg.textContent = "✨ wish made. it's already coming true. ✨";
+  launchFireworksBurst();
+}
+
+// ---------- Fireworks ----------
+function launchFireworksBurst(){
+  const colors = ['#f0a8d8','#c9a8f0','#9d6fd9','#fff7e0'];
+  for(let i=0;i<24;i++){
+    const fw = document.createElement('div');
+    fw.className='firework';
+    fw.style.position='fixed';
+    fw.style.left = (40+Math.random()*20)+'vw';
+    fw.style.top = (40+Math.random()*20)+'vh';
+    fw.style.background = colors[Math.floor(Math.random()*colors.length)];
+    fw.style.boxShadow = '0 0 8px 2px '+fw.style.background;
+    fw.style.zIndex = 60;
+    document.body.appendChild(fw);
+    const angle = Math.random()*2*Math.PI;
+    const dist = 80+Math.random()*120;
+    fw.animate([
+      { transform:'translate(0,0)', opacity:1 },
+      { transform:`translate(${Math.cos(angle)*dist}px, ${Math.sin(angle)*dist}px)`, opacity:0 }
+    ], { duration: 1000+Math.random()*500, easing:'ease-out' });
+    setTimeout(()=>fw.remove(), 1600);
+  }
+}
+
+// auto fireworks loop on final scene
+let fwInterval = null;
+const scene7 = document.getElementById('scene7');
+const observer = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      if(!fwInterval){
+        launchFireworksBurst();
+        fwInterval = setInterval(launchFireworksBurst, 1400);
+      }
+    } else {
+      clearInterval(fwInterval);
+      fwInterval = null;
+    }
+  });
+}, {threshold:0.4});
+observer.observe(scene7);
+
+// ---------- Secret star ----------
+function openSecret(){ document.getElementById('secretModal').classList.add('show'); }
+function closeSecret(){ document.getElementById('secretModal').classList.remove('show'); }
+</script>
+
+</body>
+  </html>
